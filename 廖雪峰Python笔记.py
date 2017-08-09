@@ -429,4 +429,56 @@ print(f1(),f2(),f3())
 #	return x*x
 
 ## 装饰器
+"""
+#2.from functools import wraps
+def log(func):
+	#2.@wraps(func)
+	def wrapper(*args,**kw):
+		print(func.__name__,func.__doc__)
+		return func(*args,**kw)
+	return wrapper
+@log	# 相当于执行 f=log(f)
+def f(x):
+	'''do some math'''
+	print(x*x)
+f(5)
+print(f.__name__,f.__doc__) # 1.f=wrapper 2.f=f
+"""
+""" # 带参 decorator
+from functools import wraps
+def log(text):
+	def decorator(func):
+		@wraps(func)
+		def wrapper(*args,**kw):
+			print('%s %s()'%(text,func.__name__))
+			return func(*args,**kw)
+		return wrapper
+	return decorator
+@log('executing')
+def msg():
+	print('show a message!')
+msg()
+"""
 
+ # 练习
+from functools import wraps
+def log(*args):
+    text = args[0] if isinstance(args[0],str) else 'log'
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kw):
+            print('%s before %s():' % (text, func.__name__))
+            result = func(*args, **kw)
+            print('%s after %s():' % (text, func.__name__))
+            return result
+        return wrapper
+    return decorator if isinstance(args[0],str) else decorator(args[0])
+@log
+def test1():
+    print('test1')
+test1()
+
+@log('custom')
+def test2():
+    print('test2')
+test2()
