@@ -506,13 +506,89 @@ print(max2(9,3,5))
 ## 安装第三方模块 pip
 # pip3 install Pillow
 # https://yxnt.github.io/2016/05/15/Pillow-Python3.5/
+"""	PIL实例
 from PIL import Image
 im=Image.open('C:/Users/cosensible/Pictures/pic.png')
 print(im.format,im.size,im.mode)
 im.thumbnail((200,100))
 im.save('C:/Users/cosensible/Pictures/thumb.jpg','JPEG')
+"""
 # 模块搜索路径
 # 默认：当前目录 已安装内置模块和第三方模块
 # 添加搜索目录
 # 1.sys.path.append('目录名')	运行时修改
 # 2.设置环境变量 PYTHONPATH
+
+
+### 面向对象编程
+# 类和实例
+# 访问限制
+"""
+class Student(object):
+	def __init__(self,name,score):
+		self.__name=name #私有变量
+		self.__score=score
+	def show_msg(self):
+		print('%s:%s'%(self.__name,self.__score))
+std=Student('Jack',88)
+std.show_msg()
+print(std._Student__name) #通过 _Student__name 访问 __name
+std.__name='New' #新增 __name变量,与class内部__name不是同一个变量
+std.show_msg()
+print(std.__name)
+"""
+# 继承和多态  动态语言
+"""
+class Animal(object): # 继承与多态
+	def run(self):
+		print('Animal is running...')
+class Dog(Animal):
+	def run(self): # 覆盖父类方法
+		print('Dog is running...')
+class Cat(Animal):
+	def run(self):
+		print('Cat is running...')
+def move(animal):
+	animal.run()
+move(Animal())
+move(Dog())
+move(Cat())
+class Timer(object):	#动态特性
+	def run(self):
+		print('Start...')
+move(Timer())	# 只要对象有 run() 就行
+"""
+# 获取对象信息
+""" # type()
+print(type(123)==int)
+print(type('string')==str)
+import types
+def fn():
+	pass
+print(type(fn)==types.FunctionType)
+print(type(abs)==types.FunctionType)
+print(type(abs)==types.BuiltinFunctionType)
+print(type(lambda x:x*x)==types.LambdaType)
+print(type((x for x in range(10)))==types.GeneratorType)
+"""
+# isinstance()
+#print(isinstance(100,int))
+#print(isinstance([1,2,3],(list,tuple)))
+# dir() 获取对象所有属性和方法
+#print(dir(100))
+"""
+# getattr() setattr() hasattr()
+class MyObject(object):
+	def __init__(self):
+		self.x=9
+	def power(self):
+		return self.x*self.x
+obj=MyObject()
+print(hasattr(obj,'x'))
+print(hasattr(obj,'y'))
+setattr(obj,'y',18)
+print(getattr(obj,'y'))
+print(getattr(obj,'z',404)) # 404 为默认返回
+fn=getattr(obj,'power')
+print(fn())
+"""
