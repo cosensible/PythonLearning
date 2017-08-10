@@ -459,8 +459,7 @@ def msg():
 	print('show a message!')
 msg()
 """
-
- # 练习
+""" # 练习
 from functools import wraps
 def log(*args):
     text = args[0] if isinstance(args[0],str) else 'log'
@@ -482,3 +481,38 @@ test1()
 def test2():
     print('test2')
 test2()
+"""
+"""
+## 偏函数  functools.partial
+# 将函数的某些参数固定，返回新函数
+# 可接收函数对象、*args、**kw 三个参数
+import functools
+int2=functools.partial(int,base=2)
+print(int2('100'),int2('100',base=10))
+max2=functools.partial(max,10)
+print(max2(9,3,5))
+"""
+### 模块
+# 一个 .py文件
+# 包 __init__.py
+## 使用模块
+#import test
+#test.hello()
+## 作用域
+# public 	: xxx PI
+# private	: _xxx   __xxx
+# 特殊变量 	: __xxx__
+
+## 安装第三方模块 pip
+# pip3 install Pillow
+# https://yxnt.github.io/2016/05/15/Pillow-Python3.5/
+from PIL import Image
+im=Image.open('C:/Users/cosensible/Pictures/pic.png')
+print(im.format,im.size,im.mode)
+im.thumbnail((200,100))
+im.save('C:/Users/cosensible/Pictures/thumb.jpg','JPEG')
+# 模块搜索路径
+# 默认：当前目录 已安装内置模块和第三方模块
+# 添加搜索目录
+# 1.sys.path.append('目录名')	运行时修改
+# 2.设置环境变量 PYTHONPATH
