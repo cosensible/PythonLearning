@@ -492,7 +492,7 @@ print(int2('100'),int2('100',base=10))
 max2=functools.partial(max,10)
 print(max2(9,3,5))
 """
-### 模块
+### 模块  ege: test.py
 # 一个 .py文件
 # 包 __init__.py
 ## 使用模块
@@ -592,3 +592,198 @@ print(getattr(obj,'z',404)) # 404 为默认返回
 fn=getattr(obj,'power')
 print(fn())
 """
+# 实例属性和类属性
+"""
+class Student(object):
+	name='Student'
+s=Student()
+print(s.name,Student.name)
+s.name='Bob'
+print(s.name,Student.name)
+del s.name
+print(s.name,Student.name)
+"""
+
+"""
+### 面向对象高级编程
+class Student(object):
+	pass
+s=Student()
+# 给实例绑定属性
+s.name='Jack'
+# 给实例绑定方法
+def set_age(self,age):
+	self.age=age
+from types import MethodType
+s.set_age=MethodType(set_age,s)
+s.set_age(25)
+print(s.age)
+# 给类绑定方法
+def set_score(self,score):
+	self.score=score
+Student.set_score=set_score
+s.set_score(100)
+print(s.score)
+"""
+
+# 用 __slots__ 限制属性
+#class Student(object):
+#	__slots__=('name','age')
+# Student 实例只能绑定 name,age 属性
+# 对子类不起作用,除非子类也定义  __slots__
+# 这样子类的属性包括自身和父类的 __slots__
+
+"""
+## 使用@property
+# 既能检查参数，又能和属性一样访问
+class Student(object):
+	# birth 为读写属性
+	@property
+	def birth(self):
+		return self._birth
+	@birth.setter
+	def birth(self,value):
+		self._birth=value
+
+	# age 为只读属性	
+	@property
+	def age(self):
+		return 2017-self._birth
+"""
+
+"""
+# 多重继承 MixIn
+class Mammal(object):
+	pass
+class RunnableMixIn(object):
+	def run(self):
+		print('Running')
+class Dog(Mammal,RunnableMixIn):
+	pass
+"""
+
+# 定制类  __xxx__ 变量
+# __str__	  	__repr__
+# __iter__ 		__next__
+# __getitem__	__setitem__	  __delitem__
+# __getattr__	
+# __call__    callable()
+
+## 枚举类
+#from enum import Enum,unique
+""" 1
+score=Enum('Score',('A','B','C'))
+for name,member in score.__members__.items():
+	print(name,'=>',member,',',member.value)
+print(score.A.value,score(1))
+"""
+""" 2
+@unique	#保证无重复值
+class Score(Enum):
+	A=0
+	B=1
+	C=2
+for name,member in Score.__members__.items():
+	print(name,'=>',member,',',member.value)
+print(Score.A.value,Score(1))
+"""
+"""
+## 元类
+# type() 既返回对象类型，又创建新类型
+# type() 参数：1.class名称 2.父类集合 3.方法
+def fn(self,name='world'):
+	print('Hello,%s!'%name)
+Hi=type('Hello',(object,),dict(hello=fn))
+h=Hi()
+h.hello()
+print(type(h))
+"""
+
+### 错误、调试和测试
+## 错误处理  try...except...finally...
+# except后可加 else
+# 抛出错误 raise
+# 记录错误  logging模块
+"""
+import logging
+def foo(s):
+	return 10/int(s)
+def bar(s):
+	return foo(s)*2
+def main():
+	try:
+		bar('0')
+	except Exception as e:
+		print('Error:',e)
+		logging.exception(e)
+main()
+"""
+
+## 调试
+# 断言 assert  AssertionError
+# 关闭断言 -O 参数
+#def fn(n):
+#	assert n!=0,'n is zero'
+#	return 10/n
+"""
+# logging
+# 指定信息级别 debug info warning error
+# 可同时输出到不同地方
+import logging 
+logging.basicConfig(level=logging.INFO)
+n=0
+logging.info('n=%d'%n)
+print(10/n)
+"""
+# pdb
+# 启动：-m pdb 
+# 查看代码：l
+# 单步执行：n
+# 查看变量：p 变量名
+# 结束调试：q
+# 设置断点
+#import pdb
+#pdb.set_trace()
+
+## 测试
+"""
+# 单元测试
+import unittest
+from mydict import Dict
+
+class TestDict(unittest.TestCase):
+	# 测试方法必须以 test 开头
+	def test_init(self):
+		d=Dict(a=1,b='test')
+		self.assertEqual(d.a,1)
+		self.assertTrue(isinstance(d,dict))
+
+	def test_attr(self):
+		d=Dict()
+		d.key='value'
+		self.assertTrue('key' in d)
+		self.assertEqual(d['key'],'value')
+
+	def test_key(self):
+		d=Dict()
+		d['key']='value'
+		self.assertEqual(d.key,'value')
+
+	def test_error(self):
+		d=Dict()
+		with self.assertRaises(KeyError):
+			value=d['empty']
+		with self.assertRaises(AttributeError):
+			value=d.empty	
+# 运行单元测试
+if __name__ == '__main__':
+	unittest.main()
+# 另一种方式：加参数 -m unittest
+# setUp() 与 tearDown()
+# 分别在每一个测试方法前后执行
+"""
+
+# doctest 文档测试  
+# 提取注释中的代码执行测试
+# 严格按照Python命令行的输入输出来测试结果
+# python3 mydict.py
