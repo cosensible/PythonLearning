@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-#---------本文为Python3笔记-----------#
+#-----Python3笔记------#
 
 
 ### 输入和输出
