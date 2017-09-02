@@ -9,12 +9,12 @@
 ## 文件读写
 # 写文件  创建文件
 # open() 传入'w'或'wb'表示写文本文件或二进制文件
-#with open('./io_test.txt','w',encoding='utf-8') as f:
+#with open('./IO测试.txt','w',encoding='utf-8') as f:
 #	f.write('hello,中国！')
 """ 
 # 读文件
 try:
-	f=open('./io_test.txt','r',encoding='utf-8') #读文件
+	f=open('./IO测试.txt','r',encoding='utf-8') #读文件
 	print(f.read())
 finally:
 	if f:
@@ -23,7 +23,7 @@ finally:
 """
 # 改进：引入 with语句自动调用 close()
 # 和 try ... finally 一样
-with open('./io_test.txt','r',encoding='utf-8') as f:
+with open('./IO测试.txt','r',encoding='utf-8') as f:
 	#print(f.read())		#读取所有内容
 	#print(f.read(6)) 		#读取最多20个字节
 	#print(f.readline())	#读取一行内容
@@ -36,7 +36,7 @@ with open('./io_test.txt','r',encoding='utf-8') as f:
 # 读取二进制文件 	'rb'
 # 字符编码			encoding参数
 # 编码错误处理 		errors参数
-#with open('./io_test.txt','r',encoding='utf-8',errors='ignore') as f:
+#with open('./IO测试.txt','r',encoding='utf-8',errors='ignore') as f:
 #	pass
 
 ## StringIO和BytesIO
@@ -76,7 +76,7 @@ print(os.path.join('\\usr\\me','hello'))	#合成路径
 print(os.path.split('/usr/me/test.txt'))	#拆分路径
 print(os.path.splitext('/usr/me/test.txt'))	#得到文件扩展名
 # 以上合并拆分路径的函数不要求路径真实存在
-#os.rename('io_test.txt','atest.py')	#文件重命名
+#os.rename('IO测试.txt','atest.py')	#文件重命名
 #os.remove('atest.py')					#删除文件
 # 复制文件：shutil模块提供的copyfile()
 """
@@ -192,7 +192,7 @@ output,err=p.communicate(b'set q=mx\nbaidu.com\nexit\n')
 print(output.decode('gbk'))
 print('Exit code :',p.returncode)
 """
-
+"""
 # 进程间通信 Queue Pipes
 from multiprocessing import Process,Queue
 import os,time,random
@@ -221,3 +221,106 @@ if __name__ == '__main__':
 	pr.start()
 	pw.join()
 	pr.terminate()	#pr进程为死循环,只能强行终止
+"""
+"""
+## 多线程 threading
+import time,threading
+def loop():
+	print('thread %s is running...'%threading.current_thread().name)
+	for n in range(5):
+		print('thread %s >>> %s'%(threading.current_thread().name,n))
+		time.sleep(1)
+	print('thread %s ended.'%threading.current_thread().name)
+
+print('thread %s is running...'%threading.current_thread().name)
+t=threading.Thread(target=loop,name='SubThread')
+t.start()
+t.join()
+print('thread %s ended.'%threading.current_thread().name)
+"""
+"""
+## 锁机制 lock 	易造成死锁
+# 多进程：同一变量在每个进程中各有一份拷贝，互不影响
+# 多线程：所有线程共享所有变量，相互影响
+import threading
+balance=0
+#lock=threading.Lock()  #创建一个锁
+def change_num(n):
+	global balance
+	balance=balance+n
+	balance=balance-n
+def run_thread(n):
+	for i in range(100000):
+		#lock.acquire()	#上锁
+		change_num(n)
+		#lock.release()	#一定要开锁,不然其他线程无限等待
+t1=threading.Thread(target=run_thread,args=(4,))
+t2=threading.Thread(target=run_thread,args=(5,))
+t1.start()
+t2.start()
+t1.join()
+t2.join()
+print(balance)	# 没有锁机制,结果并不一定为零
+"""
+# Python解释器有GIL全局锁,导致多线程无法利用多核
+# 可通过多进程实现多核任务
+
+"""
+## ThreadLocal
+# 每个线程局部变量的参数传递问题
+import threading
+thread_local=threading.local()
+def msg_print():
+	std=thread_local.student
+	print('Attr: %s in thread: %s'%(std,threading.current_thread().name))
+def run_thread(name):
+	thread_local.student=name
+	msg_print()
+
+t1=threading.Thread(target=run_thread,args=('Ace',),name='Thread_1')
+t2=threading.Thread(target=run_thread,args=('Bob',),name='Thread_2')
+t1.start()
+t2.start()
+t1.join()
+t2.join()
+"""
+## 多线程 VS 多进程
+## 分布式进程：把多进程分布到多台机器 managers
+
+
+### 正则表达式
+# \d：匹配一个数字
+# \w：匹配一个数字或字母
+# . ：匹配任意字符
+# \s：匹配空白符
+# 匹配特殊字符用\
+
+## 匹配变长字符串
+# * ：任意个
+# + ：至少一个
+# ? ：零或一个
+# {n}  ：n个
+# {n:m}：n-m个
+
+## 匹配范围
+# [0-9a-zA-Z\_]：可以匹配一个数字、字母、下划线
+# A|B：匹配A或B
+# ^ ：行的开头  ^\d表示必须以数字开头
+# $ ：行的结尾  $\d表示必须以数字结尾
+
+## re模块
+import re
+print(re.match(r'^\d{3}\-\d{3,8}$','010-12345'))
+# 切分字符串
+print('a b   c'.split(' '))
+print(re.split(r'[\s\,\;]+','a, b;;   c'))
+# 分组 ()
+m=re.match(r'^(\d{3})\-(\d{3,8}$)','010-12345')
+print(m.groups(),m.group(0),m.group(1),m.group(2))
+# 贪婪匹配(默认)：匹配尽可能多的字符
+print(re.match(r'^(\d+)(0*)$','102300').groups())
+# 非贪婪匹配加?
+print(re.match(r'^(\d+?)(0*)$','102300').groups())
+# 编译
+re_telephone=re.compile(r'^(\d{3})\-(\d{3,8})$')
+print(re_telephone.match('010-12345').groups())
